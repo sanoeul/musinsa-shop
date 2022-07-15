@@ -3,7 +3,6 @@ package com.musinsa.report.parksanhee.domain;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -15,7 +14,10 @@ public class Item {
     @Column(name = "item_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private BigDecimal price;
+
+    @Embedded
+    private Money price = Money.ZERO;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private Brand brand;
