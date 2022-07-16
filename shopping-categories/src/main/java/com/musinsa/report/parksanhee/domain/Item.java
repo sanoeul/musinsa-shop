@@ -16,8 +16,7 @@ public class Item {
     private Long id;
 
     @Embedded
-    @Builder.Default
-    private Money price = Money.ZERO;
+    private Money price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")

@@ -30,9 +30,6 @@ public class Money {
         return new Money(amount);
     }
 
-    public Money plus(Money amount) {
-        return new Money(this.amount.add(amount.amount));
-    }
 
     @Override
     public String toString() {

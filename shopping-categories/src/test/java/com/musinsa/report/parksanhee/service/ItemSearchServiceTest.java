@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class ItemServiceTest extends AbstractServiceTest {
+class ItemSearchServiceTest extends AbstractServiceTest {
     @Autowired
-    private ItemService itemService;
+    private ItemSearchService itemSearchService;
 
     @Test
     @DisplayName("한 브랜드에서 모든 카테고리의 상품 최저가 및 브랜드 조회")
@@ -40,7 +41,7 @@ class ItemServiceTest extends AbstractServiceTest {
         아이템_카테고리_생성(하의_카테고리, 아이템3);
 
         // when
-        Money 브랜드_최저가 = itemService.getTotalMinimumPricesOfBrandItems("브랜드1");
+        Money 브랜드_최저가 = Money.wons(itemSearchService.getTotalMinimumPricesOfBrandItems("브랜드1").getMinimumPrice());
 
         // then
         assertThat(브랜드_최저가).isEqualTo(Money.wons(2000));
@@ -52,7 +53,7 @@ class ItemServiceTest extends AbstractServiceTest {
         // given
         Brand 브랜드1 = 브랜드_생성("브랜드1");
         // when
-        Throwable thrown = catchThrowable(() -> itemService.getTotalMinimumPricesOfBrandItems("브랜드1"));
+        Throwable thrown = catchThrowable(() -> itemSearchService.getTotalMinimumPricesOfBrandItems("브랜드1"));
         // then
         assertThat(thrown).isInstanceOf(NotFoundItemException.class);
     }
@@ -77,18 +78,18 @@ class ItemServiceTest extends AbstractServiceTest {
         아이템_카테고리_생성(상의_카테고리, 브랜드3_상의_아이템1);
 
         // when
-        MinAndMaxBrandItemDto 카테고리_브랜드_아이템_최소_최대_가격 = itemService.getMinimumAndMaximumPriceByCategory("상의");
+        MinAndMaxBrandItemDto 카테고리_브랜드_아이템_최소_최대_가격 = itemSearchService.getMinimumAndMaximumPriceByCategory("상의");
 
         // then
-        assertThat(카테고리_브랜드_아이템_최소_최대_가격.getMinimumBrand().getPrice()).isEqualTo(Money.wons(2000));
-        assertThat(카테고리_브랜드_아이템_최소_최대_가격.getMaximumBrand().getPrice()).isEqualTo(Money.wons(5000));
+        assertThat(카테고리_브랜드_아이템_최소_최대_가격.getMinimumBrand().getMinimumPrice().compareTo(BigDecimal.valueOf(2000))).isEqualTo(0);
+        assertThat(카테고리_브랜드_아이템_최소_최대_가격.getMaximumBrand().getMinimumPrice().compareTo(BigDecimal.valueOf(5000))).isEqualTo(0);
     }
 
     @Test
     @DisplayName("존재하지 않은 카테고리 이름으로 최소, 최대 가격 조회시 예외 발생")
     void getMinimumAndMaximumPriceByNullCategory() {
         // when
-        Throwable thrown = catchThrowable(() -> itemService.getMinimumAndMaximumPriceByCategory("카테고리"));
+        Throwable thrown = catchThrowable(() -> itemSearchService.getMinimumAndMaximumPriceByCategory("카테고리"));
         // then
         assertThat(thrown).isInstanceOf(NotFoundCategoryException.class);
     }
@@ -103,11 +104,11 @@ class ItemServiceTest extends AbstractServiceTest {
         아이템_카테고리_생성(상의_카테고리, 브랜드1_상의_아이템1);
 
         // when
-        MinAndMaxBrandItemDto 카테고리_브랜드_아이템_최소_최대_가격 = itemService.getMinimumAndMaximumPriceByCategory("상의");
+        MinAndMaxBrandItemDto 카테고리_브랜드_아이템_최소_최대_가격 = itemSearchService.getMinimumAndMaximumPriceByCategory("상의");
 
         // then
         assertAll(
-                () -> assertThat(카테고리_브랜드_아이템_최소_최대_가격.getMinimumBrand().getPrice()).isEqualTo(Money.wons(9000)),
+                () -> assertThat(카테고리_브랜드_아이템_최소_최대_가격.getMinimumBrand().getMinimumPrice().compareTo(BigDecimal.valueOf(9000))).isEqualTo(0),
                 () -> assertThat(카테고리_브랜드_아이템_최소_최대_가격.getMaximumBrand()).isNull()
         );
     }
@@ -158,17 +159,17 @@ class ItemServiceTest extends AbstractServiceTest {
         카테고리_브랜드별_검색_리스트.add(B브랜드_아우터);
 
         // when
-        CategoryBrandItemsDto categoryBrandItemDtos = itemService.getAllMinimumPricesByCategoryAndBrand(카테고리_브랜드별_검색_리스트);
+        CategoryBrandItemsDto categoryBrandItemDtos = itemSearchService.getAllMinimumPricesByCategoryAndBrand(카테고리_브랜드별_검색_리스트);
 
         // then
         assertAll(
                 () -> assertThat(categoryBrandItemDtos.getItemList().size()).isEqualTo(2),
                 () -> assertThat(categoryBrandItemDtos.getItemList().get(0).getCategoryName()).isEqualTo("상의"),
                 () -> assertThat(categoryBrandItemDtos.getItemList().get(0).getBrandName()).isEqualTo("A"),
-                () -> assertThat(categoryBrandItemDtos.getItemList().get(0).getPrice()).isEqualTo(Money.wons(1000L)),
+                () -> assertThat(categoryBrandItemDtos.getItemList().get(0).getMinimumPrice().compareTo(BigDecimal.valueOf(1000))).isEqualTo(0),
                 () -> assertThat(categoryBrandItemDtos.getItemList().get(1).getCategoryName()).isEqualTo("아우터"),
                 () -> assertThat(categoryBrandItemDtos.getItemList().get(1).getBrandName()).isEqualTo("C"),
-                () -> assertThat(categoryBrandItemDtos.getItemList().get(1).getPrice()).isEqualTo(Money.wons(900L))
+                () -> assertThat(categoryBrandItemDtos.getItemList().get(1).getMinimumPrice().compareTo(BigDecimal.valueOf(900))).isEqualTo(0)
         );
     }
 
@@ -180,7 +181,7 @@ class ItemServiceTest extends AbstractServiceTest {
         CategoryBrandDto 없는_카테고리_브랜드 = CategoryBrandDto.builder().categoryName("상의").brandName("A").build();
         카테고리_브랜드별_검색_리스트.add(없는_카테고리_브랜드);
         // when
-        Throwable thrown = catchThrowable(() -> itemService.getAllMinimumPricesByCategoryAndBrand(카테고리_브랜드별_검색_리스트));
+        Throwable thrown = catchThrowable(() -> itemSearchService.getAllMinimumPricesByCategoryAndBrand(카테고리_브랜드별_검색_리스트));
         // then
         assertThat(thrown).isInstanceOf(NotFoundItemException.class);
     }
@@ -231,14 +232,14 @@ class ItemServiceTest extends AbstractServiceTest {
         카테고리_브랜드별_검색_리스트.add(존재하지_않는_브랜드_카테고리);
 
         // when
-        CategoryBrandItemsDto categoryBrandItemDtos = itemService.getAllMinimumPricesByCategoryAndBrand(카테고리_브랜드별_검색_리스트);
+        CategoryBrandItemsDto categoryBrandItemDtos = itemSearchService.getAllMinimumPricesByCategoryAndBrand(카테고리_브랜드별_검색_리스트);
 
         // then
         assertAll(
                 () -> assertThat(categoryBrandItemDtos.getItemList().size()).isEqualTo(1),
                 () -> assertThat(categoryBrandItemDtos.getItemList().get(0).getCategoryName()).isEqualTo("상의"),
                 () -> assertThat(categoryBrandItemDtos.getItemList().get(0).getBrandName()).isEqualTo("A"),
-                () -> assertThat(categoryBrandItemDtos.getItemList().get(0).getPrice()).isEqualTo(Money.wons(1000L))
+                () -> assertThat(categoryBrandItemDtos.getItemList().get(0).getMinimumPrice().compareTo(BigDecimal.valueOf(1000))).isEqualTo(0)
         );
     }
 }
