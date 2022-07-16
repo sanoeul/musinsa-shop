@@ -1,6 +1,7 @@
 package com.musinsa.report.parksanhee.repository;
 
 import com.musinsa.report.parksanhee.dto.BrandMinimumPriceDto;
+import com.musinsa.report.parksanhee.dto.CategoryBrandItemDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
                 .select(item.price.amount.min())
                 .from(item)
                 .innerJoin(itemCategory)
-                .on(item.id.eq(itemCategory.id))
+                .on(item.id.eq(itemCategory.item.id))
                 .where(item.brand.name.eq(brandName))
                 .groupBy(itemCategory.category)
                 .fetch();
@@ -37,7 +38,7 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
                 .select(Projections.constructor(BrandMinimumPriceDto.class, brand.name, item.price.amount.min()))
                 .from(item)
                 .innerJoin(itemCategory)
-                .on(item.id.eq(itemCategory.id))
+                .on(item.id.eq(itemCategory.item.id))
                 .innerJoin(brand)
                 .on(item.brand.id.eq(brand.id))
                 .innerJoin(category)
@@ -47,4 +48,39 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
                 .orderBy(item.price.amount.min().asc())
                 .fetch();
     }
+
+    @Override
+    public CategoryBrandItemDto getAllMinimumPriceByCategoryAndBrand(String categoryName, String brandName) {
+        return jpaQueryFactory
+                .select(Projections.constructor(CategoryBrandItemDto.class, category.name, brand.name, item.price.amount.min()))
+                .from(item)
+                .innerJoin(itemCategory)
+                .on(item.id.eq(itemCategory.item.id))
+                .innerJoin(brand)
+                .on(item.brand.id.eq(brand.id))
+                .innerJoin(category)
+                .on(itemCategory.category.id.eq(category.id))
+                .where(category.name.eq(categoryName).and(brand.name.eq(brandName)))
+                .groupBy(category, brand)
+                .orderBy(category.name.asc(), item.price.amount.min().asc())
+                .fetchOne();
+    }
+
+    //TODO. 추후 지움
+    @Override
+    public List<CategoryBrandItemDto> getAllMinimumPrice() {
+        return jpaQueryFactory
+                .select(Projections.constructor(CategoryBrandItemDto.class, category.name, brand.name, item.price.amount.min()))
+                .from(item)
+                .innerJoin(itemCategory)
+                .on(item.id.eq(itemCategory.item.id))
+                .innerJoin(brand)
+                .on(item.brand.id.eq(brand.id))
+                .innerJoin(category)
+                .on(itemCategory.category.id.eq(category.id))
+                .groupBy(category, brand)
+                .orderBy(category.name.asc(), item.price.amount.min().asc())
+                .fetch();
+    }
+
 }
