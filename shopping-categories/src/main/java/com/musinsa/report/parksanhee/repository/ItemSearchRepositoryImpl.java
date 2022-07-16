@@ -1,6 +1,7 @@
 package com.musinsa.report.parksanhee.repository;
 
-import com.musinsa.report.parksanhee.domain.Money;
+import com.musinsa.report.parksanhee.dto.BrandMinimumPriceDto;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.musinsa.report.parksanhee.domain.QBrand.brand;
+import static com.musinsa.report.parksanhee.domain.QCategory.category;
 import static com.musinsa.report.parksanhee.domain.QItem.item;
 import static com.musinsa.report.parksanhee.domain.QItemCategory.itemCategory;
 
@@ -17,8 +20,8 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Money getLowestPricesOfBrandItems(String brandName) {
-        List<BigDecimal> prices = jpaQueryFactory
+    public List<BigDecimal> getMinimumPricesOfBrandItems(String brandName) {
+        return jpaQueryFactory
                 .select(item.price.amount.min())
                 .from(item)
                 .innerJoin(itemCategory)
@@ -26,9 +29,22 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
                 .where(item.brand.name.eq(brandName))
                 .groupBy(itemCategory.category)
                 .fetch();
+    }
 
-        //TODO. QueryDsl에서는 FROM절에 SubQuery를 사용할 수 없어서, 애플리케이션 단에서 총합 계산 구현
-        BigDecimal totalPrice = prices.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        return Money.wons(totalPrice);
+    @Override
+    public List<BrandMinimumPriceDto> getMinimumPricesOfCategoryItems(String categoryName) {
+        return jpaQueryFactory
+                .select(Projections.constructor(BrandMinimumPriceDto.class, brand.name, item.price.amount.min()))
+                .from(item)
+                .innerJoin(itemCategory)
+                .on(item.id.eq(itemCategory.id))
+                .innerJoin(brand)
+                .on(item.brand.id.eq(brand.id))
+                .innerJoin(category)
+                .on(itemCategory.category.id.eq(category.id))
+                .where(category.name.eq(categoryName))
+                .groupBy(brand.name)
+                .orderBy(item.price.amount.min().asc())
+                .fetch();
     }
 }

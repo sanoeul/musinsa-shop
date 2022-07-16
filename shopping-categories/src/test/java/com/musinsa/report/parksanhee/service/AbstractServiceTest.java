@@ -5,6 +5,7 @@ import com.musinsa.report.parksanhee.repository.BrandRepository;
 import com.musinsa.report.parksanhee.repository.CategoryRepository;
 import com.musinsa.report.parksanhee.repository.ItemCategoryRepository;
 import com.musinsa.report.parksanhee.repository.ItemRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,10 +25,10 @@ public abstract class AbstractServiceTest {
 
     @BeforeEach
     void tearDown() {
-        brandRepository.deleteAll();
-        itemRepository.deleteAll();
-        categoryRepository.deleteAll();
         itemCategoryRepository.deleteAll();
+        itemRepository.deleteAll();
+        brandRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 
     protected Category 카테고리_생성(String 이름) {

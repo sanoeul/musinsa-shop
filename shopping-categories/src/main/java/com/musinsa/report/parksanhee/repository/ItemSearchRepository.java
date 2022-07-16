@@ -1,7 +1,12 @@
 package com.musinsa.report.parksanhee.repository;
 
-import com.musinsa.report.parksanhee.domain.Money;
+import com.musinsa.report.parksanhee.dto.BrandMinimumPriceDto;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public interface ItemSearchRepository {
-    Money getLowestPricesOfBrandItems(String brandName);
+    List<BigDecimal> getMinimumPricesOfBrandItems(String brandName);
+
+    List<BrandMinimumPriceDto> getMinimumPricesOfCategoryItems(String categoryName);
 }

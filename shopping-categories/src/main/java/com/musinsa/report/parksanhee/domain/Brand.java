@@ -20,6 +20,6 @@ public class Brand {
     @Column(unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "brand")
     private final List<Item> item = new ArrayList<>();
 }

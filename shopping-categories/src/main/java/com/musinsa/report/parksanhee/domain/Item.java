@@ -16,6 +16,7 @@ public class Item {
     private Long id;
 
     @Embedded
+    @Builder.Default
     private Money price = Money.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
