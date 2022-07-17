@@ -22,4 +22,10 @@ public class ItemCategory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    public void updateCategory(Category category){
+        if(category != null){
+            this.category = category;
+        }
+    }
 }
