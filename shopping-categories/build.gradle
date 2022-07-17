@@ -38,6 +38,12 @@ dependencies {
             "javax.persistence:javax.persistence-api",
             "javax.annotation:javax.annotation-api",
             "com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+
+    // Embedded-Redis
+    implementation 'it.ozimov:embedded-redis:0.7.2'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 // QueryDSL

@@ -6,6 +6,7 @@ import com.musinsa.report.parksanhee.dto.CategoryBrandItemsDto;
 import com.musinsa.report.parksanhee.dto.MinAndMaxBrandItemDto;
 import com.musinsa.report.parksanhee.service.ItemSearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,22 +22,25 @@ public class ItemSearchController {
     private final ItemSearchService itemSearchService;
 
     @GetMapping("/brandFilter")
+    @Cacheable(value = "brandFilter", cacheManager = "itemSearchCacheManager")
     public BrandMinimumPriceDto getTotalMinimumPricesOfBrandItems(@RequestParam("name") String brandName) {
         return itemSearchService.getTotalMinimumPricesOfBrandItems(brandName);
     }
 
     @GetMapping("/categoryFilter")
+    @Cacheable(value = "categoryFilter", cacheManager = "itemSearchCacheManager")
     public MinAndMaxBrandItemDto getMinimumAndMaximumPriceByCategory(@RequestParam("name") String categoryName) {
         return itemSearchService.getMinimumAndMaximumPriceByCategory(categoryName);
     }
 
     @GetMapping("/categoryBrandFilters")
+    @Cacheable(value = "categoryBrandFilters", cacheManager = "itemSearchCacheManager")
     public CategoryBrandItemsDto getAllMinimumPricesByCategoryAndBrand(@RequestParam("categories") String categories, @RequestParam("brands") String brands) {
-        List<CategoryBrandDto> categoryBrandsDto = convertStrToCategoryBrandDtos(categories, brands);
+        List<CategoryBrandDto> categoryBrandsDto = convertStrToCategoryBrandsDto(categories, brands);
         return itemSearchService.getAllMinimumPricesByCategoryAndBrand(categoryBrandsDto);
     }
 
-    private List<CategoryBrandDto> convertStrToCategoryBrandDtos(String categories, String brands) {
+    private List<CategoryBrandDto> convertStrToCategoryBrandsDto(String categories, String brands) {
         final String SEPARATOR = ",";
         final List<CategoryBrandDto> categoryBrandsDto = new ArrayList<>();
         final String[] splitCategories = categories.split(SEPARATOR);

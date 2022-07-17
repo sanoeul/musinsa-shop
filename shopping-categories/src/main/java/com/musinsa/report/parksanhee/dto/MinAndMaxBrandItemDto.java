@@ -3,9 +3,9 @@ package com.musinsa.report.parksanhee.dto;
 import lombok.*;
 
 @Getter
-@Setter
 @Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class MinAndMaxBrandItemDto {
     private BrandMinimumPriceDto minimumBrand;
     private BrandMinimumPriceDto maximumBrand;
