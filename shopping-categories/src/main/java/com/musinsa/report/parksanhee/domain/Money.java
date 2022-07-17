@@ -1,5 +1,6 @@
 package com.musinsa.report.parksanhee.domain;
 
+import com.musinsa.report.parksanhee.exception.NotAllowNegativeNumberException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,10 +24,16 @@ public class Money {
     private BigDecimal amount;
 
     public static Money wons(long amount) {
+        if(amount < 0){
+            throw new NotAllowNegativeNumberException("가격은 음수가 될 수 없습니다.");
+        }
         return new Money(BigDecimal.valueOf(amount));
     }
 
     public static Money wons(BigDecimal amount) {
+        if(amount.compareTo(BigDecimal.ZERO) < 0){
+            throw new NotAllowNegativeNumberException("가격은 음수가 될 수 없습니다.");
+        }
         return new Money(amount);
     }
 
