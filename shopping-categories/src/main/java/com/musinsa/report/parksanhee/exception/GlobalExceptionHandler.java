@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
         ErrorResponseDto errorResponse = new ErrorResponseDto(e.getStatusCode(), e.getMessage());
         return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
     }
-    @ExceptionHandler(NotAllowNegativeNumberException.class)
+    @ExceptionHandler({NotAllowNegativeNumberException.class, IllegalArgumentException.class})
     public ResponseEntity<ErrorResponseDto> handleAuthException(NotAllowNegativeNumberException e) {
         HttpStatus statusCode= HttpStatus.BAD_REQUEST;
         ErrorResponseDto errorResponse = new ErrorResponseDto(statusCode, e.getMessage());

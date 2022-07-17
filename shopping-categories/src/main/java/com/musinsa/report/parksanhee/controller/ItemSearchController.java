@@ -47,7 +47,7 @@ public class ItemSearchController {
         final String[] splitBrands = brands.split(SEPARATOR);
 
         if (splitCategories.length != splitBrands.length) {
-            throw new RuntimeException("선택한 카테고리 개수(" + splitCategories.length + ")와 브랜드 개수(" + splitBrands.length + ")가 일치하지 않습니다.");
+            throw new IllegalArgumentException("선택한 카테고리 개수(" + splitCategories.length + ")와 브랜드 개수(" + splitBrands.length + ")가 일치하지 않습니다.");
         }
         for (int i = 0; i < splitCategories.length; i++) {
 
