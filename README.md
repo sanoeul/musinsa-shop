@@ -27,9 +27,14 @@
 
 # 요구사항 검증 방식
 
-- 서비스 레이어 통합 테스트를 하며, 조건을 검증하였습니다.
-
 ![](./docs//images/검증방식.png)
+
+<br>
+
+- 서비스 레이어 통합 테스트를 하며, 조건을 검증하였습니다.
+- https://github.com/sanoeul/musinsa-shop/blob/main/shopping-categories/src/test/java/com/musinsa/report/parksanhee/service/ItemSearchServiceTest.java
+
+
 
 
 <br>
@@ -37,7 +42,7 @@
 
 # 유연한 저장소 변경을 고려하여 데이터베이스 접근 기술로 JPA를 채택
 
-- JPA는 추상화된 Dialect를 제공하여 각 벤더사에 맞게 유연하게 처리
+- JPA는 추상화된 Dialect를 제공하여 각 벤더사에 맞게 유연하게 처리할 수 있기 때문입니다.
 
 
 <br>
@@ -48,6 +53,10 @@
 - 상품의 최저가 조회의 경우 반복 요청이 많이 발생할 것으로 예상되어 느린 디스크 I/O를 해소하고자 상품 조회 데이터를 캐시하여 응답하고 있습니다.
 
 - 캐시 저장소는 빠른 구현을 위해 [embedded-redis](https://github.com/ozimov/embedded-redis)를 사용하였습니다.
+
+- https://github.com/sanoeul/musinsa-shop/blob/836509e69f727eb4a6e996f3254cf1ea9f752acd/shopping-categories/src/main/java/com/musinsa/report/parksanhee/repository/ItemSearchRepositoryImpl.java#L25
+- https://github.com/sanoeul/musinsa-shop/blob/836509e69f727eb4a6e996f3254cf1ea9f752acd/shopping-categories/src/main/java/com/musinsa/report/parksanhee/repository/ItemSearchRepositoryImpl.java#L38
+- https://github.com/sanoeul/musinsa-shop/blob/836509e69f727eb4a6e996f3254cf1ea9f752acd/shopping-categories/src/main/java/com/musinsa/report/parksanhee/repository/ItemSearchRepositoryImpl.java#L56
 
 <br>
 
@@ -88,7 +97,7 @@ ex 2)
 # 실행 결과
 
 - 제공된 샘플 데이터를 `data.sql`로 가공 및 삽입하여 모두 정상 동작하는 것을 확인했습니다.
-- 선택 과제인 `브랜드 상품 가격 추가 / 업데이트 / 삭제 API`도 구현하였습니다.
+- 선택 과제인 `상품 가격 추가 / 업데이트 / 삭제 API`도 구현하였습니다.
 
 <br>
 
@@ -114,7 +123,7 @@ GET>  items/brandFilter?name=D
 ```json
 # Request
 
-GET items/categoryFilter?name=상의
+GET> items/categoryFilter?name=상의
 
 # Response
 
@@ -138,7 +147,7 @@ GET items/categoryFilter?name=상의
 ```json
 # Request
 
-GET items/categoryBrandFilters?categories=상의,아우터,바지,스니커즈,가방,모자,양말,액세서리&brands=C,E,D,G,A,D,I,F
+GET> items/categoryBrandFilters?categories=상의,아우터,바지,스니커즈,가방,모자,양말,액세서리&brands=C,E,D,G,A,D,I,F
 
 # Response
 
