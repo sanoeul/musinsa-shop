@@ -64,3 +64,8 @@ sourceSets {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// spring 관련 의존성이 빠진 plain.jar를 생성하지 않기 위해서 추가
+jar {
+    enabled = false
+}
