@@ -12,7 +12,4 @@ public interface ItemSearchRepository {
     List<BrandMinimumPriceDto> getMinimumPricesOfCategoryItems(String categoryName);
 
     CategoryBrandItemDto getAllMinimumPriceByCategoryAndBrand(String categoryName, String brandName);
-
-    //TODO. 추후 지움
-    List<CategoryBrandItemDto> getAllMinimumPrice();
 }

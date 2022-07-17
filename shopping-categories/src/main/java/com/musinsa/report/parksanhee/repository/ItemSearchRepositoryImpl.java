@@ -65,22 +65,4 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
                 .orderBy(category.name.asc(), item.price.amount.min().asc())
                 .fetchOne();
     }
-
-    //TODO. 추후 지움
-    @Override
-    public List<CategoryBrandItemDto> getAllMinimumPrice() {
-        return jpaQueryFactory
-                .select(Projections.constructor(CategoryBrandItemDto.class, category.name, brand.name, item.price.amount.min()))
-                .from(item)
-                .innerJoin(itemCategory)
-                .on(item.id.eq(itemCategory.item.id))
-                .innerJoin(brand)
-                .on(item.brand.id.eq(brand.id))
-                .innerJoin(category)
-                .on(itemCategory.category.id.eq(category.id))
-                .groupBy(category, brand)
-                .orderBy(category.name.asc(), item.price.amount.min().asc())
-                .fetch();
-    }
-
 }
