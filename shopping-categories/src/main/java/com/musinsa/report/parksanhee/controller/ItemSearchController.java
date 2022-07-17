@@ -10,11 +10,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +27,10 @@ public class ItemSearchController {
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 404, message = "요청한 브랜드에 존재하는 상품을 찾을 수 없을 경우 실패")
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/brandFilter")
-    @Cacheable(value = "brandFilter", cacheManager = "itemSearchCacheManager")
-    public ResponseEntity<BrandMinimumPriceDto> getTotalMinimumPricesOfBrandItems(@RequestParam("name") String brandName) {
-        BrandMinimumPriceDto response = itemSearchService.getTotalMinimumPricesOfBrandItems(brandName);
-        return ResponseEntity.ok().body(response);
+    public BrandMinimumPriceDto getTotalMinimumPricesOfBrandItems(@RequestParam("name") String brandName) {
+        return itemSearchService.getTotalMinimumPricesOfBrandItems(brandName);
     }
 
     @ApiOperation(value = "각 카테고리 이름으로 최소, 최대 가격 조회", notes = "ex) items/categoryFilter?name=상의")
@@ -42,11 +38,10 @@ public class ItemSearchController {
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 404, message = "요청한 카테고리에 존재하는 상품을 찾을 수 없을 경우 실패")
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/categoryFilter")
-    @Cacheable(value = "categoryFilter", cacheManager = "itemSearchCacheManager")
-    public ResponseEntity<MinAndMaxBrandItemDto> getMinimumAndMaximumPriceByCategory(@RequestParam("name") String categoryName) {
-        MinAndMaxBrandItemDto response = itemSearchService.getMinimumAndMaximumPriceByCategory(categoryName);
-        return ResponseEntity.ok().body(response);
+    public MinAndMaxBrandItemDto getMinimumAndMaximumPriceByCategory(@RequestParam("name") String categoryName) {
+        return itemSearchService.getMinimumAndMaximumPriceByCategory(categoryName);
     }
 
     @ApiOperation(value = "모든 카테고리의 상품을 브랜드 별로 선택 시 최저가 조회", notes = "ex) items/categoryBrandFilters?categories=상의,아우터&brands=A,B")
@@ -54,8 +49,8 @@ public class ItemSearchController {
             @ApiResponse(code = 200, message = "조회 성공"),
             @ApiResponse(code = 404, message = "요청한 조건에 존재하는 상품을 찾을 수 없을 경우 실패")
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/categoryBrandFilters")
-    @Cacheable(value = "categoryBrandFilters", cacheManager = "itemSearchCacheManager")
     public CategoryBrandItemsDto getAllMinimumPricesByCategoryAndBrand(@RequestParam("categories") String categories, @RequestParam("brands") String brands) {
         List<CategoryBrandDto> categoryBrandsDto = convertStrToCategoryBrandsDto(categories, brands);
         return itemSearchService.getAllMinimumPricesByCategoryAndBrand(categoryBrandsDto);

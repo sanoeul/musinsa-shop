@@ -25,7 +25,7 @@ public class ItemController {
             @ApiResponse(code = 404, message = "카테고리 또는 브랜드가 존재하지 않거나 가격을 음수로 지정할 경우 생성 실패")
     })
     @PostMapping
-    @CacheEvict(value = {"brandFilter", "categoryFilter", "categoryBrandFilters"}, allEntries = true)
+    @CacheEvict(value = {"brandFilter", "categoryFilter", "categoryBrandFilter"}, allEntries = true)
     public ResponseEntity<ItemResponse> createItem(@RequestBody ItemRequestDto itemRequestDto) {
         ItemResponse itemResponse = itemService.saveItem(itemRequestDto);
         return ResponseEntity.created(URI.create("/items/" + itemResponse.getItemId())).body(itemResponse);
@@ -37,7 +37,7 @@ public class ItemController {
             @ApiResponse(code = 404, message = "상품이 존재하지 않아 삭제 실패")
     })
     @DeleteMapping("/{itemId}")
-    @CacheEvict(value = {"brandFilter", "categoryFilter", "categoryBrandFilters"}, allEntries = true)
+    @CacheEvict(value = {"brandFilter", "categoryFilter", "categoryBrandFilter"}, allEntries = true)
     public ResponseEntity deleteItem(@PathVariable("itemId") Long itemId) {
         itemService.deleteItem(itemId);
         return ResponseEntity.noContent().build();
@@ -49,7 +49,7 @@ public class ItemController {
             @ApiResponse(code = 404, message = "카테고리 또는 브랜드가 존재하지 않거나 가격을 음수로 지정할 경우 갱신 실패")
     })
     @PutMapping("/{itemId}")
-    @CacheEvict(value = {"brandFilter", "categoryFilter", "categoryBrandFilters"}, allEntries = true)
+    @CacheEvict(value = {"brandFilter", "categoryFilter", "categoryBrandFilter"}, allEntries = true)
     public ResponseEntity updateItem(@PathVariable("itemId") Long itemId, @RequestBody ItemRequestDto itemUpdateReqeust) {
         itemService.updateItem(itemId, itemUpdateReqeust);
         return ResponseEntity.ok().build();

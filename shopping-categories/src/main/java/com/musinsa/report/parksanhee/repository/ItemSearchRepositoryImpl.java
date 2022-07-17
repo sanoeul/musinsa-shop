@@ -5,6 +5,7 @@ import com.musinsa.report.parksanhee.dto.CategoryBrandItemDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    @Cacheable(value = "brandFilter", cacheManager = "itemSearchCacheManager")
     public List<BigDecimal> getMinimumPricesOfBrandItems(String brandName) {
         return jpaQueryFactory
                 .select(item.price.amount.min())
@@ -33,6 +35,7 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
     }
 
     @Override
+    @Cacheable(value = "categoryFilter", cacheManager = "itemSearchCacheManager")
     public List<BrandMinimumPriceDto> getMinimumPricesOfCategoryItems(String categoryName) {
         return jpaQueryFactory
                 .select(Projections.constructor(BrandMinimumPriceDto.class, brand.name, item.price.amount.min()))
@@ -50,6 +53,7 @@ public class ItemSearchRepositoryImpl implements ItemSearchRepository {
     }
 
     @Override
+    @Cacheable(value = "categoryBrandFilter", cacheManager = "itemSearchCacheManager")
     public CategoryBrandItemDto getAllMinimumPriceByCategoryAndBrand(String categoryName, String brandName) {
         return jpaQueryFactory
                 .select(Projections.constructor(CategoryBrandItemDto.class, category.name, brand.name, item.price.amount.min()))
